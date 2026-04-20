@@ -1,0 +1,6 @@
+crewai
+praw
+textblob
+python-dotenv
+pandas
+Plotly
