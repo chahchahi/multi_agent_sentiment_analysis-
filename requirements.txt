@@ -4,3 +4,4 @@ textblob
 python-dotenv
 pandas
 Plotly
+langchain-community
