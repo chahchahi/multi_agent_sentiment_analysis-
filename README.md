@@ -1,22 +1,22 @@
-# Multi-Agent Sentiment Analysis
+# Multi-Agent Website Article Research
 
-A Python project using CrewAI to implement a multi-agent system for sentiment analysis. The system consists of three specialized agents:
+A Python project using CrewAI to implement a multi-agent system for researching articles on specific websites. The system consists of three specialized agents:
 
-1. **Reddit Data Collector**: Fetches relevant posts from Reddit based on specified topics
-2. **Content Summarizer**: Analyzes and summarizes topic-related discussions
-3. **Sentiment Classifier**: Classifies the sentiment of each message as positive, negative, or neutral
+1. **Research Agent**: Searches for articles on a specified website related to user-provided topics
+2. **Auditor Agent**: Verifies and validates the found articles for relevance and accuracy
+3. **Report Agent**: Creates comprehensive markdown reports summarizing the verified articles
 
 ## Features
 
-- Automated data collection from Reddit
-- Intelligent content summarization
-- Sentiment analysis using natural language processing
+- Targeted website article search using Google search with site-specific queries
+- Intelligent article verification and relevance checking
+- Automated report generation with article summaries and references
 - Modular agent-based architecture using CrewAI
 
 ## Prerequisites
 
-- Python 3.8+
-- Reddit API credentials (client ID and secret)
+- Python 3.12+
+- Serper API key for Google search functionality
 
 ## Installation
 
@@ -32,46 +32,47 @@ A Python project using CrewAI to implement a multi-agent system for sentiment an
    ```
 
 3. Set up environment variables:
-   - Copy `.env` file and fill in your Reddit API credentials
-   - Get credentials from [Reddit Apps](https://www.reddit.com/prefs/apps)
+   - Copy `.env` file and add the following API keys:
+     - `SERPER_API_KEY=<your_serper_api_key>` for Google search support via Serper
+   - Get Serper API key from [Serper.dev](https://serper.dev/)
+   - Install Ollama from [ollama.ai](https://ollama.ai/) and pull a model (e.g., `ollama pull llama3.2`)
+   - Optionally set `OLLAMA_MODEL=<model_name>` and `OLLAMA_BASE_URL=<url>` in `.env` (defaults to mistral and http://localhost:11434)
 
 ## Usage
 
-Run the main script:
+Run the main script with topic and website parameters:
 
 ```bash
-python -m src.main
+python -m src.main "topic name" "https://example.com"
 ```
 
-Or use the installed script:
 
-```bash
-run
-```
-
-The system will collect data on a default topic (artificial intelligence). Modify the `inputs` in `main.py` to change the topic.
+The system will search for articles on the specified website related to your topic and generate a comprehensive report.
 
 ## Project Structure
 
 ```
 src/
 ├── agents/
-│   ├── reddit_agent.py      # Reddit data collection agent
-│   ├── summarizer_agent.py  # Content summarization agent
-│   └── sentiment_agent.py   # Sentiment analysis agent
+│   ├── research_agent.py    # Website search and article discovery agent
+│   ├── auditor_agent.py     # Article verification and validation agent
+│   └── report_agent.py      # Report generation and summarization agent
 ├── tools/
-│   ├── reddit_tool.py       # Reddit API integration tool
-│   └── sentiment_tool.py    # Sentiment analysis tool
-└── main.py                  # Main crew execution script
+│   ├── reddit_tool.py       # Reddit API integration tool (legacy)
+│   └── sentiment_tool.py    # Sentiment analysis tool (legacy)
+├── config.py                # Configuration management
+├── main.py                  # Main crew execution script
+└── testing.py               # Testing utilities
 ```
 
 ## Dependencies
 
 - crewai: Multi-agent framework
-- praw: Reddit API wrapper
-- textblob: Sentiment analysis library
+- crewai-tools: Collection of tools including SerperDevTool for web search
 - python-dotenv: Environment variable management
+- Other dependencies as specified in requirements.txt
 
 ## License
 
 See LICENSE file for details.
+

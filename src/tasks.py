@@ -1,44 +1,20 @@
-from crewai import Crew
+from crewai import Task
 from src.agents.research_agent import ResearchAgent
 from src.agents.auditor_agent import AuditorAgent
 from src.agents.report_agent import ReportAgent
-from src.tasks import create_research_tasks
-import os
-import sys
-from dotenv import load_dotenv
 
-load_dotenv()
 
-if not os.getenv("SERPER_API_KEY"):
-    raise EnvironmentError(
-        "SERPER_API_KEY is required for SerperDevTool. "
-        "Set it in your environment or in a .env file at the project root."
-    )
-
-def main():
-
-    if len(sys.argv) >= 3:
-        topic = sys.argv[1].strip()
-        website = sys.argv[2].strip()
-    else:
-        topic = os.getenv("RESEARCH_TOPIC") or input("Enter the research topic: ").strip()
-        website = os.getenv("RESEARCH_WEBSITE") or input("Enter the website domain or URL: ").strip()
-
-    if not topic or not website:
-        raise ValueError("Both topic and website must be provided.")
-
-    research_agent = ResearchAgent()
-    auditor_agent = AuditorAgent()
-    report_agent = ReportAgent()
-
+def create_research_tasks(research_agent, auditor_agent, report_agent):
+    """Create and return the research workflow tasks."""
+    
     search_task = Task(
         description=(
             "Search EXCLUSIVELY within the website {website} for articles related to the topic '{topic}'. "
             "Use the 'Search the internet with Serper' tool with site-specific search queries like 'site:domain.com topic'. "
             "Only return articles that are actually from the specified website {website}. "
-            "Return article titles, URLs, short snippets, and reference citations from {website} only."
-            "format the query as: site:{website} {topic}"
-            "When there are multiple topics, try multiple queries: site:{website} topic1,  site:{website} topic2 etc"
+            "Return article titles, URLs, short snippets, and reference citations from {website} only. "
+            "Format the query as: site:{website} {topic}. "
+            "When there are multiple topics break down the topics , and format the query as: site:{website} (topic1 OR topic2 OR ...). "
             "Merge results and return only articles from {website}."
         ),
         agent=research_agent,
@@ -71,14 +47,4 @@ def main():
         context=[audit_task]
     )
 
-    crew = Crew(
-        agents=[research_agent, auditor_agent, report_agent],
-        tasks=[search_task, audit_task, report_task],
-        verbose=True
-    )
-    result = crew.kickoff(inputs={"topic": topic, "website": website})
-    print("\n=== Research Report ===\n")
-    print(result)
-
-if __name__ == "__main__":
-    main()
+    return search_task, audit_task, report_task
